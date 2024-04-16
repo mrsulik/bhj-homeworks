@@ -1,9 +1,10 @@
 class Game {
   constructor(container) {
     this.container = container;
-    this.wordElement = container.querySelector('.word');
-    this.winsElement = container.querySelector('.status__wins');
-    this.lossElement = container.querySelector('.status__loss');
+    this.wordElement = container.querySelector(".word");
+    this.winsElement = container.querySelector(".status__wins");
+    this.lossElement = container.querySelector(".status__loss");
+    this.timerElement = container.querySelector(".status__timer");
 
     this.reset();
 
@@ -17,13 +18,26 @@ class Game {
   }
 
   registerEvents() {
-    /*
-      TODO:
-      Написать обработчик события, который откликается
+    const currentSymbolS = document.addEventListener("keydown", (e) => {
+      if(this.currentSymbol.textContent === e.key) {
+        this.success();
+      } else {
+        this.fail();
+      }
+    });
+
+    /* Написать обработчик события, который откликается
       на каждый введённый символ.
-      В случае правильного ввода символа вызываем this.success()
+      В случае правильного ввода слова вызываем this.success()
       При неправильном вводе символа - this.fail();
       DOM-элемент текущего символа находится в свойстве this.currentSymbol.
+     -------------------
+     Получить DOM-элемент текущего символа, который необходимо ввести (свойство this.currentSymbol)
+Получить символ, который был введён с клавиатуры.
+Если два символа одинаковые, вызывать метод this.success
+Если два символа отличаются, вызвать метод this.fail
+При сравнении регистр не должен быть важен (а или А)
+Обратите внимание на то, что именно записывается в this.currentSymbol. Вспомните в чем различия между keydown и keyup
      */
   }
 
@@ -54,8 +68,8 @@ class Game {
 
   setNewWord() {
     const word = this.getWord();
-
     this.renderWord(word);
+    this.renderTimer(word);
   }
 
   getWord() {
@@ -87,8 +101,26 @@ class Game {
     this.wordElement.innerHTML = html;
 
     this.currentSymbol = this.wordElement.querySelector('.symbol_current');
-  }
+  
 }
 
-new Game(document.getElementById('game'))
+//interval
+  renderTimer(word) {
+	 this.timerElement.textContent = word.length; 
+	 let time = word.length;
+	 clearInterval(this.countDown);
 
+	 this.countDown = setInterval(() =>  {
+	 	if (time > 0) {
+    		time -=1;
+   			this.timerElement.textContent = time;    
+ 	 	}   else {
+    		this.timerElement.textContent = time;   
+    		this.fail();
+	 		}
+		},1000);
+	} 
+}
+//interval
+
+new Game(document.getElementById('game'));
